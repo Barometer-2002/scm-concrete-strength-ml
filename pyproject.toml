@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scm-concrete-strength-ml"
+version = "0.1.0"
+description = "Interpretable and uncertainty-aware machine learning for SCM concrete strength"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "Barometer-2002"}]
+keywords = [
+  "concrete",
+  "machine-learning",
+  "conformal-prediction",
+  "multi-objective-optimization",
+  "decision-support",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+  "numpy>=1.23",
+  "pandas>=1.5",
+  "scikit-learn>=1.3",
+]
+
+[project.optional-dependencies]
+boosters = ["xgboost>=2.0", "lightgbm>=4.0"]
+tuning = ["optuna>=3.5"]
+explain = ["shap>=0.44", "matplotlib>=3.7"]
+app = ["streamlit>=1.40", "plotly>=5.20"]
+dev = ["build>=1.2", "pytest>=8.0", "ruff>=0.9"]
+all = [
+  "xgboost>=2.0",
+  "lightgbm>=4.0",
+  "optuna>=3.5",
+  "shap>=0.44",
+  "matplotlib>=3.7",
+  "streamlit>=1.40",
+  "plotly>=5.20",
+]
+
+[project.scripts]
+scm-concrete-ml = "scm_concrete_ml.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Barometer-2002/scm-concrete-strength-ml"
+Repository = "https://github.com/Barometer-2002/scm-concrete-strength-ml"
+Issues = "https://github.com/Barometer-2002/scm-concrete-strength-ml/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

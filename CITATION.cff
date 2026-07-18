@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the repository."
+title: "SCM Concrete Strength ML"
+type: software
+version: 0.1.0
+date-released: 2026-07-18
+authors:
+  - name: "Barometer-2002"
+repository-code: "https://github.com/Barometer-2002/scm-concrete-strength-ml"
+license: MIT
+keywords:
+  - concrete
+  - machine learning
+  - conformal prediction
+  - decision support
