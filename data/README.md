@@ -1,31 +1,23 @@
-# Data policy
+# 数据使用说明
 
-This repository does **not** redistribute the 1,456-record research dataset.
-The study table was assembled from multiple third-party sources, and the
-redistribution terms have not yet been documented source by source. Publishing
-the merged CSV without that audit would create an avoidable licensing risk.
+本仓库**不再分发原研究使用的 1,456 条合并数据**。该数据表由多个第三方来源汇总而成，目前尚未逐项记录各来源的再分发许可。在完成来源与许可证审计前直接公开合并 CSV 会产生不必要的合规风险。
 
-`synthetic_example.csv` is generated entirely by
-`scripts/generate_synthetic_data.py`. It exists only for software tests,
-examples, and UI demonstrations. It is not experimental evidence and must not
-be used for scientific or engineering conclusions.
+`synthetic_example.csv` 完全由 `scripts/generate_synthetic_data.py` 生成，只用于软件测试、代码示例和界面演示。它不是试验数据，不能用于材料规律分析、工程结论或配合比设计。
 
-## Bring your own data
+## 使用自有数据
 
-Provide one row per mixture with these dosage columns in consistent units:
+每行对应一组配合比，各用量字段必须采用一致单位：
 
-| Column | Meaning |
+| 字段 | 含义 |
 |---|---|
-| `Cement` | Portland cement dosage |
-| `Water` | Mixing water dosage |
-| `Coarse aggregate` | Coarse aggregate dosage |
-| `Fine aggregate` | Fine aggregate dosage |
-| `FA` | Fly ash dosage |
-| `SF` | Silica fume dosage |
-| `GGBFS` | Ground granulated blast-furnace slag dosage |
-| `SP` | Superplasticizer dosage |
-| `Cylinder compressive strength` | Target strength in MPa |
+| `Cement` | 硅酸盐水泥用量 |
+| `Water` | 拌合水用量 |
+| `Coarse aggregate` | 粗骨料用量 |
+| `Fine aggregate` | 细骨料用量 |
+| `FA` | 粉煤灰用量 |
+| `SF` | 硅灰用量 |
+| `GGBFS` | 粒化高炉矿渣粉用量 |
+| `SP` | 减水剂用量 |
+| `Cylinder compressive strength` | 圆柱体抗压强度目标值，单位 MPa |
 
-Before combining public datasets, retain the original URL, citation, license,
-specimen geometry, curing age, test standard, and any unit conversion record.
-Do not assume that a publicly downloadable file permits redistribution.
+汇总公开数据前，应保留每条数据的原始链接、引用信息、许可证、试件尺寸、养护龄期、试验标准和单位换算记录。公开可下载不等于允许重新分发。

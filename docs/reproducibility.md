@@ -1,30 +1,20 @@
-# Reproducibility and research boundaries
+# 复现条件与研究边界
 
-## Reported study configuration
+## 原研究配置
 
-The underlying study used 1,456 cylinder-strength records, eight engineered
-features, an 80/20 split with random seed 66, 300 Optuna trials per model, and
-5 repeats of 10-fold cross-validation. The compared model families were RF,
-XGBoost, LightGBM, SVR, and MLP.
+原研究使用 1,456 条圆柱体抗压强度记录和八项工程特征。数据按 80/20 划分，随机种子为 66；每类模型进行 300 轮 Optuna 调参，并采用 5 次重复的 10 折交叉验证。参与比较的模型为随机森林、XGBoost、LightGBM、SVR 和 MLP。
 
-The selected LightGBM model reported test-set `R2 = 0.8620`,
-`RMSE = 6.6175 MPa`, and `MAE = 4.2178 MPa`. At 90% target coverage, the
-KNN-RSCP experiment reported empirical coverage `0.9007` and mean interval
-width `20.2764 MPa`.
+最终选择的 LightGBM 在测试集上得到 `R2 = 0.8620`、`RMSE = 6.6175 MPa` 和 `MAE = 4.2178 MPa`。在 90% 目标覆盖率下，KNN-RSCP 的经验覆盖率为 `0.9007`，平均区间宽度为 `20.2764 MPa`。
 
-These values are historical study results. They are **not** reproduced by the
-synthetic example in this repository. Exact numerical reproduction requires
-the audited research dataset, frozen split, package versions, and best-model
-parameters.
+这些数值是原研究的历史结果，仓库中的合成数据示例**不能复现或证明这些指标**。精确数值复现需要经过许可审计的原研究数据、冻结的数据划分、依赖版本和最优模型参数。
 
-## What this repository verifies
+## 当前仓库验证的内容
 
-- deterministic feature construction;
-- common model interfaces and leakage-aware scaling pipelines;
-- repeated cross-validation and regression metrics;
-- fixed-width, residual-scaled, and KNN-enhanced conformal intervals;
-- constraint, Pareto, and TOPSIS decision-support utilities;
-- an end-to-end workflow on synthetic data.
+- 确定性的工程特征构建；
+- 统一模型接口和避免标准化数据泄漏的训练管道；
+- 重复交叉验证与回归指标计算；
+- 固定宽度、残差尺度和 KNN 增强保形预测区间；
+- 工程约束、Pareto 解集和 TOPSIS 决策工具；
+- 基于合成数据的端到端执行流程。
 
-The public package is a cleaned implementation of the reusable methods, not a
-byte-for-byte archive of the paper workspace.
+当前公开软件包是对可迁移方法的规范化重构，不是论文工作区的逐字节归档，也不包含第三方合并数据、训练模型和全部实验过程文件。

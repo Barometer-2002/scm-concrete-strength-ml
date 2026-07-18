@@ -1,8 +1,8 @@
-# Methodology
+# 方法说明
 
-## Engineering features
+## 工程特征
 
-The raw mixture dosages are converted into the eight inputs used by the study:
+原始配合比用量转换为研究使用的八项输入特征：
 
 - `B = Cement + FA + SF + GGBFS`
 - `W/B = Water / B`
@@ -13,43 +13,24 @@ The raw mixture dosages are converted into the eight inputs used by the study:
 - `SF/B = SF / B`
 - `GGBFS/B = GGBFS / B`
 
-This representation separates total binder content, water demand, aggregate
-structure, admixture dosage, and individual SCM replacement ratios. The code
-checks arithmetic validity but does not certify mixture feasibility.
+这种表达将胶凝材料总量、用水需求、骨料结构、外加剂掺量和各类 SCM 替代率分开表示。代码只检查数值和计算关系是否有效，不判断配合比是否满足工程可行性或设计规范。
 
-## Point prediction
+## 点预测
 
-The model registry exposes Random Forest, XGBoost, LightGBM, support vector
-regression, and a multilayer perceptron. SVR and MLP are wrapped in a
-`StandardScaler` pipeline so that scaling is learned inside every validation
-fold. `repeated_cross_validate` evaluates all model families under the same
-shuffled repeated K-fold protocol. Optional Optuna tuning minimizes mean CV
-RMSE.
+模型注册表提供随机森林、XGBoost、LightGBM、支持向量回归和多层感知机。SVR 和 MLP 封装在 `StandardScaler` 管道中，确保标准化参数只在每个训练折内学习。`repeated_cross_validate` 使用统一的打乱重复 K 折方案评价全部模型。可选的 Optuna 调参以交叉验证平均 RMSE 最小为目标。
 
-## KNN-RSCP intervals
+## KNN-RSCP 预测区间
 
-`KNNResidualScaleConformalRegressor` implements a reusable split-conformal
-variant:
+`KNNResidualScaleConformalRegressor` 实现了可复用的拆分保形预测流程：
 
-1. Split the available training records into a fitting subset and a calibration
-   subset.
-2. Generate out-of-fold predictions within the fitting subset and use absolute
-   residuals as scale targets.
-3. Add two local KNN diagnostics to the scale-model inputs: mean standardized
-   neighbor distance and neighbor-target standard deviation.
-4. Fit a residual-scale model and normalize calibration residuals by their
-   predicted scale.
-5. Apply the finite-sample corrected conformal quantile and return adaptive
-   intervals for new records.
+1. 将可用训练记录划分为模型拟合子集和保形校准子集；
+2. 在拟合子集内部生成折外预测，并将绝对残差作为尺度模型的目标；
+3. 向尺度模型增加两项局部 KNN 信息：标准化邻域平均距离和邻域目标值标准差；
+4. 拟合残差尺度模型，并使用预测尺度对校准残差进行归一化；
+5. 计算经过有限样本修正的保形分位数，为新记录返回宽度自适应的预测区间。
 
-The implementation targets marginal coverage under exchangeability. It does
-not guarantee conditional coverage for every mixture family, material source,
-or strength range. External validation remains necessary.
+该实现以样本可交换条件下的边际覆盖率为目标，不保证每种配合比体系、材料来源或强度区间都满足相同的条件覆盖率。面向实际材料体系使用前仍需进行外部验证。
 
-## Multi-objective extension
+## 多目标决策扩展
 
-The decision-support module is an engineering extension rather than part of the
-reported paper experiment. It provides constraint filtering, non-dominated
-solution detection, and TOPSIS ranking. Cost and environmental scores are
-calculated only from factors supplied by the caller; the package does not embed
-universal prices or emission factors.
+决策支持模块属于原研究之后的工程扩展，不是论文正式实验的一部分。模块提供约束筛选、非支配解识别和 TOPSIS 排序。成本与环境影响只根据调用方提供的场景系数计算，软件包不内置所谓通用价格或通用碳排放系数。

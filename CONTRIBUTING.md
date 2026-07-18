@@ -1,11 +1,8 @@
-# Contributing
+# 贡献指南
 
-1. Create a focused branch from `main`.
-2. Install the development environment with `python -m pip install -e ".[dev]"`.
-3. Run `ruff check .` and `pytest` before opening a pull request.
-4. Add tests for behavior changes and keep public examples independent of the
-   private research dataset.
+1. 从 `main` 创建范围明确的开发分支；
+2. 使用 `python -m pip install -e ".[dev]"` 安装开发环境；
+3. 提交拉取请求前运行 `ruff check .` 和 `pytest`；
+4. 行为变更必须补充测试，公开示例不得依赖未公开的研究数据。
 
-Bug reports should include a minimal input schema, Python version, package
-versions, the command used, and the full traceback. Do not attach proprietary
-mixture records or credentials to an issue.
+问题报告应提供最小输入结构、Python 版本、依赖版本、实际执行命令和完整错误堆栈。请勿在议题中上传专有配合比数据、个人凭据或访问令牌。
