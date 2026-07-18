@@ -1,71 +1,65 @@
-# SCM Concrete Strength ML
+# SCM 混凝土强度机器学习与决策支持
 
-[![Tests](https://github.com/Barometer-2002/scm-concrete-strength-ml/actions/workflows/tests.yml/badge.svg)](https://github.com/Barometer-2002/scm-concrete-strength-ml/actions/workflows/tests.yml)
+[![测试](https://github.com/Barometer-2002/scm-concrete-strength-ml/actions/workflows/tests.yml/badge.svg)](https://github.com/Barometer-2002/scm-concrete-strength-ml/actions/workflows/tests.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-3776AB.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-2E7D32.svg)](LICENSE)
+[![许可证：MIT](https://img.shields.io/badge/license-MIT-2E7D32.svg)](LICENSE)
 
-An open, testable implementation of a research workflow for supplementary
-cementitious material (SCM) concrete: engineering feature construction, model
-comparison, uncertainty-aware strength prediction, and multi-objective
-candidate screening.
+这是一个面向补充胶凝材料（SCM）混凝土的机器学习工程项目，覆盖配合比数据校验、工程特征构建、统一建模与评估、预测不确定性量化，以及多目标候选方案筛选。仓库同时提供 Python 包、命令行工具、Streamlit 交互应用、单元测试和持续集成。
 
-> The included CSV is synthetic. The 1,456-record study dataset is not
-> redistributed because source-by-source redistribution rights have not yet
-> been documented. Synthetic-demo metrics are not paper results.
+> **数据声明：**仓库中的 CSV 为程序生成的合成数据，只用于软件测试和界面演示。原研究使用的 1,456 条合并数据涉及多个第三方来源，在逐项确认再分发许可前不会上传。合成数据的运行指标不等于论文结果。
 
-## 中文概览
+## 已实现功能
 
-这个仓库把原论文工作区中可迁移的部分整理成标准 Python 工程，覆盖原始配合比数据校验、8 项工程特征构建、RF/XGBoost/LightGBM/SVR/MLP 统一建模、重复交叉验证、Optuna 调参、KNN 增强残差尺度保形预测，以及约束筛选、Pareto 前沿和 TOPSIS 决策排序。仓库同时提供命令行流程、Streamlit 交互原型、合成样例、单元测试和 GitHub Actions。
-
-公开版强调可运行与可审计，不上传论文目录、第三方合并数据、训练模型、个人路径或实验归档。多目标优化属于论文方法之后的工程扩展，不与已发表或待发表的实验结论混写。
-
-## Capabilities
-
-| Layer | Included behavior |
+| 模块 | 当前公开实现 |
 |---|---|
-| Data | Schema validation, numeric checks, deterministic synthetic examples |
-| Features | `B`, `W/B`, `A/B`, `SR`, `SP/B`, `FA/B`, `SF/B`, `GGBFS/B` |
-| Models | RF, XGBoost, LightGBM, SVR, MLP through one registry |
-| Evaluation | R2, RMSE, MAE, shuffled repeated K-fold validation |
-| Tuning | Optional Optuna/TPE search using repeated-CV RMSE |
-| Reliability | Fixed-width CP, residual-scaled CP, KNN-RSCP intervals |
-| Decisions | Constraints, Pareto non-dominated set, TOPSIS ranking |
-| Delivery | CLI, Streamlit prototype, tests, linting, package build, CI |
+| 数据处理 | 字段检查、数值检查、异常输入拦截、可重复生成的合成样例 |
+| 特征工程 | `B`、`W/B`、`A/B`、`SR`、`SP/B`、`FA/B`、`SF/B`、`GGBFS/B` |
+| 模型体系 | 随机森林、XGBoost、LightGBM、SVR、MLP 统一接口 |
+| 模型评估 | R2、RMSE、MAE、打乱后的重复 K 折交叉验证 |
+| 超参数优化 | 可选 Optuna/TPE 搜索，以重复交叉验证平均 RMSE 为目标 |
+| 可靠性评估 | 固定宽度保形预测、残差尺度保形预测、KNN-RSCP 自适应区间 |
+| 方案决策 | 工程约束筛选、Pareto 非支配解识别、TOPSIS 综合排序 |
+| 应用交付 | CLI、中文 Streamlit 应用、测试、代码检查、Python 包构建、GitHub Actions |
 
 ```mermaid
 flowchart LR
-    A["Raw mixture dosages"] --> B["Validation and 8 engineered features"]
-    B --> C["Unified model registry"]
-    C --> D["Repeated CV and optional Optuna tuning"]
-    C --> E["Point prediction"]
-    E --> F["KNN-RSCP prediction interval"]
-    F --> G["Constraints and candidate generation"]
-    G --> H["Pareto screening and TOPSIS ranking"]
-    H --> I["CLI outputs and Streamlit app"]
+    A["原始配合比用量"] --> B["数据校验与8项工程特征"]
+    B --> C["统一模型接口"]
+    C --> D["重复交叉验证与Optuna调参"]
+    C --> E["抗压强度点预测"]
+    E --> F["KNN-RSCP预测区间"]
+    F --> G["工程约束与候选方案筛选"]
+    G --> H["Pareto解集与TOPSIS排序"]
+    H --> I["命令行结果与Web应用"]
 ```
 
-## Quick start
+## 快速开始
 
 ```bash
 git clone https://github.com/Barometer-2002/scm-concrete-strength-ml.git
 cd scm-concrete-strength-ml
 python -m venv .venv
-# Windows: .venv\Scripts\activate
-# Linux/macOS: source .venv/bin/activate
+
+# Windows
+.venv\Scripts\activate
+
+# Linux/macOS
+source .venv/bin/activate
+
 python -m pip install -e ".[dev]"
 python scripts/generate_synthetic_data.py
 scm-concrete-ml demo --data data/synthetic_example.csv --output artifacts/demo
 pytest
 ```
 
-The demo writes:
+端到端示例会生成：
 
-- `artifacts/demo/summary.json`: point and interval metrics;
-- `artifacts/demo/predictions.csv`: observed values, predictions, and 90% intervals.
+- `artifacts/demo/summary.json`：点预测与区间预测指标；
+- `artifacts/demo/predictions.csv`：观测值、预测值及 90% 预测区间。
 
-## Python API
+## 工程特征构建
 
-### Build engineering features
+输入为各组分的体积用量或质量用量，单位必须保持一致：
 
 ```python
 import pandas as pd
@@ -83,9 +77,21 @@ raw_mix = pd.DataFrame([{
 }])
 
 X = engineer_mix_features(raw_mix)
+print(X)
 ```
 
-### Compare models under one protocol
+八项特征定义如下：
+
+- `B = Cement + FA + SF + GGBFS`；
+- `W/B = Water / B`；
+- `A/B = (Coarse aggregate + Fine aggregate) / B`；
+- `SR = Fine aggregate / (Coarse aggregate + Fine aggregate)`；
+- `SP/B = SP / B`；
+- `FA/B = FA / B`；
+- `SF/B = SF / B`；
+- `GGBFS/B = GGBFS / B`。
+
+## 统一模型比较
 
 ```python
 from scm_concrete_ml.data import load_dataset
@@ -102,10 +108,9 @@ comparison = benchmark_models(
 print(comparison)
 ```
 
-Install `.[boosters]` to add XGBoost and LightGBM, or `.[tuning]` to use the
-Optuna tuning API.
+安装 `.[boosters]` 可启用 XGBoost 和 LightGBM，安装 `.[tuning]` 可使用 Optuna 调参接口。
 
-### Return an adaptive prediction interval
+## KNN-RSCP 预测区间
 
 ```python
 from scm_concrete_ml import KNNResidualScaleConformalRegressor, get_model
@@ -120,7 +125,9 @@ predictor = KNNResidualScaleConformalRegressor(
 prediction, lower, upper = predictor.predict_interval(X.iloc[:5])
 ```
 
-### Screen candidate solutions
+该实现使用拟合子集的折外残差训练尺度模型，并将标准化邻域平均距离和邻域强度标准差作为局部信息加入尺度预测。返回区间面向边际覆盖率，不保证每种 SCM 体系、强度范围或材料来源都具有相同覆盖率。
+
+## Pareto 与 TOPSIS 决策
 
 ```python
 from scm_concrete_ml import Objective, pareto_mask, topsis_score
@@ -131,68 +138,72 @@ objectives = [
     Objective("Cost score", "min"),
     Objective("SCM replacement", "max"),
 ]
+
 candidate_table["Pareto"] = pareto_mask(candidate_table, objectives)
 pareto = candidate_table.loc[candidate_table["Pareto"]].copy()
 pareto["TOPSIS"] = topsis_score(pareto, objectives)
 ```
 
-Carbon and cost factors must come from the caller. The package intentionally
-does not hard-code universal prices, transport assumptions, or EPD values.
+成本与碳排放由调用方提供场景系数。仓库不内置所谓通用价格、运输假设或环境产品声明数据，避免把演示参数误认为工程依据。
 
-## Interactive app
+## 中文 Web 应用
 
 ```bash
 python -m pip install -e ".[app]"
 streamlit run app/streamlit_app.py
 ```
 
-The app supports single-mixture strength intervals and candidate screening with
-editable cost and carbon scenario factors. Its generated candidates and default
-factors are demonstrations, not mix-design recommendations.
+应用包含三个标签页：
 
-## Research reference
+1. **模型概览**：查看合成数据中工程特征与强度的关系；
+2. **单组配比预测**：输入各组分用量，获得强度点预测和 90% 预测区间；
+3. **候选方案筛选**：设置强度约束、成本系数和碳排系数，查看 Pareto 解集、TOPSIS 排名及交互图表。
 
-The original study used 1,456 SCM concrete cylinder-strength records and five
-model families. It reported the following held-out results for the selected
-LightGBM model:
+应用生成的候选方案与默认场景系数仅用于功能演示，不构成配合比设计建议。
 
-| Metric | Reported value |
+## 原研究结果
+
+原研究基于 1,456 条 SCM 混凝土圆柱体抗压强度记录，对比随机森林、XGBoost、LightGBM、SVR 和 MLP。最终 LightGBM 在冻结测试集上的结果为：
+
+| 指标 | 结果 |
 |---|---:|
 | R2 | 0.8620 |
 | RMSE | 6.6175 MPa |
 | MAE | 4.2178 MPa |
 
-At 90% target coverage, the KNN-RSCP experiment reported empirical coverage
-`0.9007` and mean interval width `20.2764 MPa`. These are historical research
-results and are not asserted by the synthetic public demo. See
-[reproducibility notes](docs/reproducibility.md) for the frozen configuration
-and [methodology](docs/methodology.md) for implementation details.
+在 90% 目标覆盖率下，KNN-RSCP 的经验覆盖率为 `0.9007`，平均区间宽度为 `20.2764 MPa`。这些数值是原研究的历史结果，当前合成数据示例不能复现或证明这些指标。
 
-## Data and engineering limits
+## 公开边界
 
-- A model trained on compiled literature data is not automatically valid for a
-  new material source, curing regime, specimen geometry, or testing standard.
-- Conformal prediction targets marginal coverage under exchangeability; it
-  does not ensure equal coverage in every SCM system or strength range.
-- Predicted strengths and Pareto rankings are screening evidence, not a design
-  code check, laboratory result, or production release decision.
-- Third-party datasets should be cited and licensed independently. See
-  [data policy](data/README.md).
+当前仓库是对可迁移方法的开源重构，不是论文冻结工作区的逐文件镜像：
 
-## Repository layout
+- 已公开：特征工程、模型接口、评估、调参、保形区间、Pareto/TOPSIS、Web 应用和测试；
+- 未公开：第三方合并数据、训练模型、个人路径、实验归档和论文过程文件；
+- 尚未完整迁移：论文专用 SHAP 出图流程、二维响应面脚本和全部冻结超参数；
+- 多目标优化与 Web 应用属于研究之后的工程扩展，不冒充论文正式实验结果。
+
+更多信息见[方法说明](docs/methodology.md)、[复现边界](docs/reproducibility.md)和[数据说明](data/README.md)。
+
+## 使用限制
+
+- 文献汇总数据上训练的模型不能自动推广到新的材料来源、养护制度、试件尺寸或试验标准；
+- 预测强度、区间宽度和 Pareto 排名只能用于候选方案初筛；
+- 实际应用仍需要试验验证、设计规范校核和原材料质量控制；
+- 软件许可证与数据许可证相互独立，MIT 许可证不授予任何第三方数据的使用权。
+
+## 仓库结构
 
 ```text
-src/scm_concrete_ml/   reusable package
-app/                   Streamlit decision-support demo
-examples/              end-to-end Python example
-data/                  synthetic example and data policy
-docs/                  methodology and reproducibility boundaries
-scripts/               deterministic data generation
-tests/                 unit and workflow tests
-.github/workflows/     continuous integration
+src/scm_concrete_ml/   可复用 Python 包
+app/                   中文 Streamlit 决策原型
+examples/              端到端调用示例
+data/                  合成数据与数据说明
+docs/                  方法与复现边界
+scripts/               合成数据生成脚本
+tests/                 单元测试与流程测试
+.github/workflows/     持续集成配置
 ```
 
-## License
+## 许可证
 
-Code is released under the [MIT License](LICENSE). Dataset licenses are separate
-from the software license; no rights to third-party research data are granted.
+代码采用 [MIT 许可证](LICENSE)。第三方数据拥有各自独立的引用与许可要求，本仓库不授予其再分发权利。
